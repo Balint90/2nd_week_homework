@@ -2,9 +2,9 @@ import chalk from 'chalk';
 import { input, select } from '@inquirer/prompts';
 import { add, subtract, multiply, divide } from './operations.js';
 
-let op = null, op1 = null, op2 = null;
+let operator = null, operand1 = null, operand2 = null;
 
-export default async function calculator() {
+export async function calculator() {
     await getInput();
     await calculate();
 }
@@ -42,34 +42,38 @@ async function getOperation() {
 }
 
 async function getNumber(message) {
-    const op = parseInt(await input({ message }), 10);
-    if (!isNumber(op)) {
+    const operand = parseInt(await input({ message }), 10);
+    if (!isNumber(operand)) {
         console.log("The given input is not a number! Try again...");
         return getNumber(message);
     }
-    return op;
+    if (operator === '/' && operand === 0) {
+        console.log("Divide 0 or division by 0 is pointless. Please enter a number other than 0.");
+        return getNumber(message);
+    }
+    return operand;
 }
 
 async function getInput() {
-    op = await getOperation();
-    op1 = await getNumber("Give me the first operand: ");
-    op2 = await getNumber("Give me the second operand: ");
+    operator = await getOperation();
+    operand1 = await getNumber("Give me the first operand: ");
+    operand2 = await getNumber("Give me the second operand: ");
 }
 
 async function calculate() {
-    const output = `${chalk.yellow(op1)} ${chalk.red(op)} ${chalk.yellow(op2)} ${chalk.blue('=')}`;
-    switch (op) {
+    const output = `${chalk.yellow(operand1)} ${chalk.red(operator)} ${chalk.yellow(operand2)} ${chalk.blue('=')}`;
+    switch (operator) {
         case "+":
-            console.log(`${output} ${chalk.green(add(op1, op2))}`);
+            console.log(`${output} ${chalk.green(add(operand1, operand2))}`);
             break;
         case "-":
-            console.log(`${output} ${chalk.green(subtract(op1, op2))}`);
+            console.log(`${output} ${chalk.green(subtract(operand1, operand2))}`);
             break;
         case "*":
-            console.log(`${output} ${chalk.green(multiply(op1, op2))}`);
+            console.log(`${output} ${chalk.green(multiply(operand1, operand2))}`);
             break;
         case "/":
-            console.log(`${output} ${chalk.green(divide(op1, op2))}`);
+            console.log(`${output} ${chalk.green(divide(operand1, operand2))}`);
             break;
         default:
             console.log("That is not an operation! Try again!");
